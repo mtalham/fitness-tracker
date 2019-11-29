@@ -14,6 +14,11 @@ import {CurrentTrainingComponent} from './training/current-training/current-trai
 import {NewTrainingComponent} from './training/new-training/new-training.component';
 import {PastTrainingsComponent} from './training/past-trainings/past-trainings.component';
 import {HomeComponent} from './home/home.component';
+import { HeaderComponent } from './navigation/header/header.component';
+import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
+import {StopTrainingComponent} from './training/current-training/stop-training.component';
+import {AuthService} from './auth/auth.service';
+import {ExerciseService} from './training/exercise.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +29,10 @@ import {HomeComponent} from './home/home.component';
     CurrentTrainingComponent,
     NewTrainingComponent,
     PastTrainingsComponent,
-    HomeComponent
+    HomeComponent,
+    HeaderComponent,
+    SidenavListComponent,
+    StopTrainingComponent
   ],
   imports: [
     BrowserModule,
@@ -34,8 +42,9 @@ import {HomeComponent} from './home/home.component';
     FlexLayoutModule,
     FormsModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [AuthService, ExerciseService],
+  bootstrap: [AppComponent],
+  entryComponents: [StopTrainingComponent]
 })
 export class AppModule {
 }
