@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import '@angular/material/prebuilt-themes/purple-green.css';
+@import "~@angular/material/_theming.scss";
 
 html, body {
   font-family: 'Roboto', sans-serif;
@@ -9,3 +10,11 @@ html, body {
 body {
   margin: 0;
 }
+
+$primary: mat-palette($mat-cyan,800);
+//$primary: mat-palette($mat-blue-gray,500);
+$accent: mat-palette($mat-orange,200);
+
+$theme: mat-dark-theme($primary, $accent);
+
+@include angular-material-theme($theme);

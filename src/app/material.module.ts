@@ -5,11 +5,15 @@ import {
   MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
-  MatInputModule, MatListModule,
+  MatInputModule,
+  MatListModule,
   MatNativeDateModule,
+  MatPaginatorModule,
   MatProgressSpinnerModule,
   MatSelectModule,
-  MatSidenavModule, MatSortModule, MatTableModule,
+  MatSidenavModule,
+  MatSortModule,
+  MatTableModule,
   MatTabsModule,
   MatToolbarModule,
 } from '@angular/material';
@@ -32,7 +36,8 @@ import {
     MatProgressSpinnerModule,
     MatDialogModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatPaginatorModule
   ],
   exports: [
     MatButtonModule,
@@ -51,7 +56,8 @@ import {
     MatProgressSpinnerModule,
     MatDialogModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatPaginatorModule
   ]
 })
 export class MaterialModule {
