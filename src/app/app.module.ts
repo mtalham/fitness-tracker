@@ -15,13 +15,14 @@ import {CurrentTrainingComponent} from './training/current-training/current-trai
 import {NewTrainingComponent} from './training/new-training/new-training.component';
 import {PastTrainingsComponent} from './training/past-trainings/past-trainings.component';
 import {HomeComponent} from './home/home.component';
-import { HeaderComponent } from './navigation/header/header.component';
-import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
+import {HeaderComponent} from './navigation/header/header.component';
+import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.component';
 import {StopTrainingComponent} from './training/current-training/stop-training.component';
 import {AuthService} from './auth/auth.service';
 import {TrainingService} from './training/training.service';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {AngularFireAuthModule} from '@angular/fire/auth';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
     FlexLayoutModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AngularFireAuthModule
   ],
   providers: [AuthService, TrainingService],
   bootstrap: [AppComponent],

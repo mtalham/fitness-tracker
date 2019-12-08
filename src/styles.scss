@@ -10,11 +10,15 @@ html, body {
 body {
   margin: 0;
 }
+  //background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,121,120,1) 35%, rgba(0,212,255,1) 100%);
+//background: rgb(2,0,36);
 
-$primary: mat-palette($mat-cyan,800);
-//$primary: mat-palette($mat-blue-gray,500);
-$accent: mat-palette($mat-orange,200);
+$primary: mat-palette($mat-cyan,800, 300, 900);
+//$my_primary: mat-palette($my_mat, 500);
+$my-theme-accent: mat-palette($mat-light-blue);
+$my-theme-warn: mat-palette($mat-deep-orange, A200);
+$accent: mat-palette($mat-deep-orange, A200);
 
-$theme: mat-dark-theme($primary, $accent);
+$theme: mat-dark-theme($primary, $my-theme-accent);
 
 @include angular-material-theme($theme);

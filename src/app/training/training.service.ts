@@ -1,5 +1,5 @@
 import {Exercise} from './exercise.model';
-import {Observable, Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
@@ -9,22 +9,16 @@ export class TrainingService {
   exerciseChanged = new Subject<Exercise>();
   exercisesChanged = new Subject<Exercise[]>();
   completedExercisesChanged = new Subject<Exercise[]>();
+  private fbSubs: Subscription[] = [];
 
   availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
-  private completedExercises: Exercise[] = [];
-  //   = [
-  //   {id: 'running', name: 'Running', duration: 30, calories: 80},
-  //   {id: 'crunches', name: 'Crunches', duration: 30, calories: 8},
-  //   {id: 'cycling', name: 'Cycling', duration: 20, calories: 30, state: 'completed'},
-  //   {id: 'walking', name: 'Walking', duration: 60, calories: 40},
-  // ];
 
   constructor(private db: AngularFirestore) {
   }
 
   fetchAvailableExercises() {
-    this.db.collection('availableExercises')
+    this.fbSubs.push(this.db.collection('availableExercises')
       .snapshotChanges()
       .pipe(map(response => response.map(doc => {
           return {
@@ -35,9 +29,9 @@ export class TrainingService {
           };
         })
       )).subscribe((exercises: Exercise[]) => {
-      this.availableExercises = exercises;
-      this.exercisesChanged.next([...this.availableExercises]);
-    });
+        this.availableExercises = exercises;
+        this.exercisesChanged.next([...this.availableExercises]);
+      }));
   }
 
   startTraining(selectedId: string) {
@@ -50,9 +44,9 @@ export class TrainingService {
   }
 
   fetchCompletedTrainings() {
-    this.db.collection('completedExercises')
+    this.fbSubs.push(this.db.collection('completedExercises')
       .valueChanges()
-      .subscribe((exercises: Exercise[]) => this.completedExercisesChanged.next(exercises));
+      .subscribe((exercises: Exercise[]) => this.completedExercisesChanged.next(exercises)));
   }
 
   completeTraining() {
@@ -75,6 +69,10 @@ export class TrainingService {
 
   private addExerciseToFirestore(exercise: Exercise) {
     this.db.collection('completedExercises').add(exercise).catch(err => console.log(err));
+  }
+
+  cancelSubscriptions() {
+    this.fbSubs.forEach(sub => sub.unsubscribe());
   }
 
 }
