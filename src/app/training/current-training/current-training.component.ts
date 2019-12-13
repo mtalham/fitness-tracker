@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material';
-import {StopTrainingComponent} from './stop-training.component';
+import {TrainingConfirmationComponent} from '../training-confirmation.component';
 import {TrainingService} from '../training.service';
 import {Exercise} from '../exercise.model';
 
@@ -36,8 +36,8 @@ export class CurrentTrainingComponent implements OnInit {
 
   handleStop() {
     clearInterval(this.timer);
-    const dialogRef = this.dialog.open(StopTrainingComponent, {
-      data: {progress: this.progress}
+    const dialogRef = this.dialog.open(TrainingConfirmationComponent, {
+      data: {content: `You have already completed ${this.progress} %`}
     });
 
     dialogRef.afterClosed().subscribe(res => res ?

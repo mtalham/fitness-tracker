@@ -1,7 +1,7 @@
 <div fxLayoutAlign="center center">
   <mat-form-field fxFlex="40%">
     <input matInput type="text" placeholder="Filter" (keyup)="search($event.target.value)">
-  <mat-icon matSuffix>search</mat-icon>
+    <mat-icon matSuffix>search</mat-icon>
   </mat-form-field>
 </div>
 
@@ -28,7 +28,17 @@
 
   <ng-container matColumnDef="state">
     <mat-header-cell mat-sort-header *matHeaderCellDef>State</mat-header-cell>
-    <mat-cell *matCellDef="let element">{{element.state}}</mat-cell>
+    <mat-cell *matCellDef="let element">
+      <mat-icon style="color: #00c853" *ngIf="element.state === 'completed'">done_all</mat-icon>
+      <mat-icon style="color: #f57f17" *ngIf="element.state === 'cancelled'">cancel</mat-icon>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+    <mat-header-cell *matHeaderCellDef> Action</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <mat-icon color="warn" (click)="deleteTraining(element)">delete</mat-icon>
+    </mat-cell>
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

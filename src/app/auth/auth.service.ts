@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {TrainingService} from '../training/training.service';
+import {UIService} from '../shared/UI.service';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,8 @@ export class AuthService {
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private uiService: UIService
   ) {
   }
 
@@ -29,17 +31,20 @@ export class AuthService {
   }
 
   registerUser(authData: AuthData) {
+    this.uiService.loadingChange.next(true);
     this.afAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password)
-      .then(res => {
-        console.log(res);
+      .then(() => {
+        this.uiService.loadingChange.next(false);
         this.reroute();
       })
-      .catch(err => console.log(err));
+      .catch(err => this.handleError(err.message));
   }
 
   loginUser(authData: AuthData) {
+    this.uiService.loadingChange.next(true);
     this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password)
-      .catch(err => console.log(err));
+      .then(() => this.uiService.loadingChange.next(false))
+      .catch(err => this.handleError(err.message));
   }
 
   logout(): void {
@@ -48,6 +53,11 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.isAuth;
+  }
+
+  private handleError(message: string) {
+    this.uiService.loadingChange.next(false);
+    this.uiService.showSnackbar(message, null);
   }
 
   private reroute(authChange = false, url = '/login') {

@@ -1,8 +1,9 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {TrainingService} from '../training.service';
 import {Exercise} from '../exercise.model';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Subscription} from 'rxjs';
+import {TrainingConfirmationComponent} from '../training-confirmation.component';
 
 @Component({
   selector: 'app-past-trainings',
@@ -13,12 +14,12 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   exChangeSubs: Subscription;
   pastTrainings = new MatTableDataSource<Exercise>();
-  displayedColumns = ['date', 'name', 'calories', 'duration', 'state'];
+  displayedColumns = ['date', 'name', 'calories', 'duration', 'state', 'action'];
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  constructor(private trainingService: TrainingService) {
+  constructor(private trainingService: TrainingService, private dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -37,5 +38,15 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnDestroy(): void {
     this.exChangeSubs.unsubscribe();
+  }
+
+  deleteTraining(training: Exercise) {
+    const dialogRef = this.dialog.open(TrainingConfirmationComponent, {
+      data: {
+        content: `Training '${training.name}' will be deleted permanently`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(res => res && this.trainingService.deleteExercise(training.id));
   }
 }

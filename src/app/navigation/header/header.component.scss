@@ -6,3 +6,11 @@ a {
 a:hover, a:active {
   color: darkgray;
 }
+
+.logo {
+  color: white;
+  cursor: pointer;
+  :hover {
+    color: darkgray;
+  }
+}

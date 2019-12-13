@@ -17,12 +17,13 @@ import {PastTrainingsComponent} from './training/past-trainings/past-trainings.c
 import {HomeComponent} from './home/home.component';
 import {HeaderComponent} from './navigation/header/header.component';
 import {SidenavListComponent} from './navigation/sidenav-list/sidenav-list.component';
-import {StopTrainingComponent} from './training/current-training/stop-training.component';
+import {TrainingConfirmationComponent} from './training/training-confirmation.component';
 import {AuthService} from './auth/auth.service';
 import {TrainingService} from './training/training.service';
 import {environment} from '../environments/environment';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {AngularFireAuthModule} from '@angular/fire/auth';
+import {UIService} from './shared/UI.service';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,7 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
     HomeComponent,
     HeaderComponent,
     SidenavListComponent,
-    StopTrainingComponent
+    TrainingConfirmationComponent
   ],
   imports: [
     BrowserModule,
@@ -49,9 +50,9 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
     AngularFirestoreModule,
     AngularFireAuthModule
   ],
-  providers: [AuthService, TrainingService],
+  providers: [AuthService, TrainingService, UIService],
   bootstrap: [AppComponent],
-  entryComponents: [StopTrainingComponent]
+  entryComponents: [TrainingConfirmationComponent]
 })
 export class AppModule {
 }

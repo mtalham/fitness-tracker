@@ -3,6 +3,7 @@ import {Subject, Subscription} from 'rxjs';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
+import {UIService} from '../shared/UI.service';
 
 @Injectable()
 export class TrainingService {
@@ -14,10 +15,11 @@ export class TrainingService {
   availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
 
-  constructor(private db: AngularFirestore) {
+  constructor(private db: AngularFirestore, private uiService: UIService) {
   }
 
   fetchAvailableExercises() {
+    this.uiService.loadingChange.next(true);
     this.fbSubs.push(this.db.collection('availableExercises')
       .snapshotChanges()
       .pipe(map(response => response.map(doc => {
@@ -31,6 +33,10 @@ export class TrainingService {
       )).subscribe((exercises: Exercise[]) => {
         this.availableExercises = exercises;
         this.exercisesChanged.next([...this.availableExercises]);
+        this.uiService.loadingChange.next(false);
+      }, error => {
+        this.uiService.loadingChange.next(false);
+        this.uiService.showSnackbar('Failed to fetch exercises, try again later', null);
       }));
   }
 
@@ -45,8 +51,15 @@ export class TrainingService {
 
   fetchCompletedTrainings() {
     this.fbSubs.push(this.db.collection('completedExercises')
-      .valueChanges()
-      .subscribe((exercises: Exercise[]) => this.completedExercisesChanged.next(exercises)));
+      .snapshotChanges()
+      .pipe(map(response => response.map(doc => {
+          return {
+            ...doc.payload.doc.data(),
+            id: doc.payload.doc.id,
+          };
+        })
+      )).subscribe((exercises: Exercise[]) => this.completedExercisesChanged.next(exercises)
+      ));
   }
 
   completeTraining() {
@@ -67,12 +80,18 @@ export class TrainingService {
     this.exerciseChanged.next(null);
   }
 
-  private addExerciseToFirestore(exercise: Exercise) {
-    this.db.collection('completedExercises').add(exercise).catch(err => console.log(err));
+  deleteExercise(docId: string) {
+    this.db.collection('completedExercises').doc(docId).delete()
+      .then(() => this.fetchCompletedTrainings())
+      .catch(e => console.log(e));
   }
 
   cancelSubscriptions() {
     this.fbSubs.forEach(sub => sub.unsubscribe());
+  }
+
+  private addExerciseToFirestore(exercise: Exercise) {
+    this.db.collection('completedExercises').add(exercise).catch(err => console.log(err));
   }
 
 }
