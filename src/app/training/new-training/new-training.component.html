@@ -14,7 +14,7 @@
         <mat-spinner *ngIf="loading"></mat-spinner>
       </mat-card-content>
       <mat-card-actions fxLayoutAlign="center" *ngIf="!loading">
-        <button type="submit" mat-button color="primary" [disabled]="f.invalid">Start</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="f.invalid">Start</button>
       </mat-card-actions>
     </mat-card>
   </form>

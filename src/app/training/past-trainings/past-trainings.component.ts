@@ -4,6 +4,7 @@ import {Exercise} from '../exercise.model';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Subscription} from 'rxjs';
 import {TrainingConfirmationComponent} from '../training-confirmation.component';
+import {UIService} from '../../shared/UI.service';
 
 @Component({
   selector: 'app-past-trainings',
@@ -15,16 +16,19 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
   exChangeSubs: Subscription;
   pastTrainings = new MatTableDataSource<Exercise>();
   displayedColumns = ['date', 'name', 'calories', 'duration', 'state', 'action'];
+  loading = false;
+  loadingSub: Subscription;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-  constructor(private trainingService: TrainingService, private dialog: MatDialog) {
+  constructor(private trainingService: TrainingService, private dialog: MatDialog, private uiService: UIService) {
   }
 
   ngOnInit() {
     this.trainingService.fetchCompletedTrainings();
     this.exChangeSubs = this.trainingService.completedExercisesChanged.subscribe(exercises => this.pastTrainings.data = exercises);
+    this.loadingSub = this.uiService.loadingChange.subscribe(res => this.loading = res);
   }
 
   ngAfterViewInit(): void {
@@ -38,6 +42,7 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnDestroy(): void {
     this.exChangeSubs.unsubscribe();
+    this.loadingSub.unsubscribe();
   }
 
   deleteTraining(training: Exercise) {

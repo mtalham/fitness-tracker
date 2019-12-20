@@ -57,7 +57,7 @@ export class AuthService {
 
   private handleError(message: string) {
     this.uiService.loadingChange.next(false);
-    this.uiService.showSnackbar(message, null);
+    this.uiService.showSnackbar(message);
   }
 
   private reroute(authChange = false, url = '/login') {

@@ -37,7 +37,9 @@
   <ng-container matColumnDef="action">
     <mat-header-cell *matHeaderCellDef> Action</mat-header-cell>
     <mat-cell *matCellDef="let element">
+      <button mat-icon-button>
       <mat-icon color="warn" (click)="deleteTraining(element)">delete</mat-icon>
+      </button>
     </mat-cell>
   </ng-container>
 

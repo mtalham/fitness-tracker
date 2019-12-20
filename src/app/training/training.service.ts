@@ -36,7 +36,7 @@ export class TrainingService {
         this.uiService.loadingChange.next(false);
       }, error => {
         this.uiService.loadingChange.next(false);
-        this.uiService.showSnackbar('Failed to fetch exercises, try again later', null);
+        this.uiService.showSnackbar('Failed to fetch exercises, try again later');
       }));
   }
 
