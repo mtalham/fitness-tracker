@@ -5,6 +5,9 @@ import {Router} from '@angular/router';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {TrainingService} from '../training/training.service';
 import {UIService} from '../shared/UI.service';
+import {Store} from '@ngrx/store';
+import {State} from '../app.reducer';
+import {UIAction} from '../shared/ui.reducer';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +18,8 @@ export class AuthService {
     private router: Router,
     private afAuth: AngularFireAuth,
     private trainingService: TrainingService,
-    private uiService: UIService
+    private uiService: UIService,
+    private store: Store<State>
   ) {
   }
 
@@ -41,9 +45,10 @@ export class AuthService {
   }
 
   loginUser(authData: AuthData) {
-    this.uiService.loadingChange.next(true);
+    // this.uiService.loadingChange.next(true);
+    this.store.dispatch({type: UIAction.START_LOADING});
     this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password)
-      .then(() => this.uiService.loadingChange.next(false))
+      .then(() => this.store.dispatch({type: UIAction.STOP_LOADING}))
       .catch(err => this.handleError(err.message));
   }
 
@@ -56,7 +61,8 @@ export class AuthService {
   }
 
   private handleError(message: string) {
-    this.uiService.loadingChange.next(false);
+    this.store.dispatch({type: UIAction.STOP_LOADING});
+    // this.uiService.loadingChange.next(false);
     this.uiService.showSnackbar(message);
   }
 

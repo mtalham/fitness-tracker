@@ -12,6 +12,6 @@ import {MAT_DIALOG_DATA} from '@angular/material';
   `
 })
 export class TrainingConfirmationComponent {
-  constructor(@Inject(MAT_DIALOG_DATA) private data) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data) {
   }
 }
