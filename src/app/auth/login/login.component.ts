@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {NgForm} from '@angular/forms';
 import {AuthService} from '../auth.service';
 import {Observable} from 'rxjs';
-import {UIService} from '../../shared/UI.service';
 import {Store} from '@ngrx/store';
 import {isLoading, State} from '../../app.reducer';
 
@@ -14,7 +13,7 @@ import {isLoading, State} from '../../app.reducer';
 export class LoginComponent implements OnInit {
   isLoading$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private uiService: UIService, private store: Store<State>) {
+  constructor(private authService: AuthService, private store: Store<State>) {
   }
 
   ngOnInit() {

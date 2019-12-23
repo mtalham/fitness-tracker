@@ -1,19 +1,16 @@
 import {AuthData} from './user.model';
-import {Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {TrainingService} from '../training/training.service';
 import {UIService} from '../shared/UI.service';
 import {Store} from '@ngrx/store';
-import {State} from '../app.reducer';
-import {UIAction} from '../shared/ui.reducer';
+import {getIsAuthenticated, State} from '../app.reducer';
+import {StartLoading, StopLoading} from '../shared/ui.actions';
+import {ToggleAuthentication} from './auth.reducer';
 
 @Injectable()
 export class AuthService {
-  private isAuth = false;
-  authChange = new Subject<boolean>();
-
   constructor(
     private router: Router,
     private afAuth: AngularFireAuth,
@@ -35,20 +32,21 @@ export class AuthService {
   }
 
   registerUser(authData: AuthData) {
-    this.uiService.loadingChange.next(true);
+    this.store.dispatch(new StartLoading());
+    // this.uiService.loadingChange.next(true);
     this.afAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password)
       .then(() => {
-        this.uiService.loadingChange.next(false);
+        this.store.dispatch(new StopLoading());
+        // this.uiService.loadingChange.next(false);
         this.reroute();
       })
       .catch(err => this.handleError(err.message));
   }
 
   loginUser(authData: AuthData) {
-    // this.uiService.loadingChange.next(true);
-    this.store.dispatch({type: UIAction.START_LOADING});
+    this.store.dispatch(new StartLoading());
     this.afAuth.auth.signInWithEmailAndPassword(authData.email, authData.password)
-      .then(() => this.store.dispatch({type: UIAction.STOP_LOADING}))
+      .then(() => this.store.dispatch(new StopLoading()))
       .catch(err => this.handleError(err.message));
   }
 
@@ -56,19 +54,17 @@ export class AuthService {
     this.afAuth.auth.signOut();
   }
 
-  isAuthenticated(): boolean {
-    return this.isAuth;
+  isAuthenticated() {
+    return this.store.select(getIsAuthenticated);
   }
 
   private handleError(message: string) {
-    this.store.dispatch({type: UIAction.STOP_LOADING});
-    // this.uiService.loadingChange.next(false);
+    this.store.dispatch(new StopLoading());
     this.uiService.showSnackbar(message);
   }
 
   private reroute(authChange = false, url = '/login') {
-    this.isAuth = authChange;
-    this.authChange.next(authChange);
+    this.store.dispatch(ToggleAuthentication({payload: authChange}));
     this.router.navigate([url]);
   }
 }
