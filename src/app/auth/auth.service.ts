@@ -8,6 +8,7 @@ import {Store} from '@ngrx/store';
 import {getIsAuthenticated, State} from '../app.reducer';
 import {StartLoading, StopLoading} from '../shared/ui.actions';
 import {ToggleAuthentication} from './auth.reducer';
+import {auth} from 'firebase/app';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,14 @@ export class AuthService {
     private uiService: UIService,
     private store: Store<State>
   ) {
+  }
+
+  googleSignIn() {
+    const provider = new auth.GoogleAuthProvider();
+
+    this.afAuth.auth.signInWithPopup(provider)
+      .then(res => console.log(res))
+      .catch(err => this.handleError(err.message));
   }
 
   initAuthListener() {

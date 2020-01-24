@@ -9,6 +9,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '../material.module';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {TrainingRoutingModule} from './training-routing.module';
+import {StoreModule} from '@ngrx/store';
+import {trainingReducer} from './training-reducer/training.reducer';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import {TrainingRoutingModule} from './training-routing.module';
     ReactiveFormsModule,
     MaterialModule,
     FlexLayoutModule,
-    TrainingRoutingModule
+    TrainingRoutingModule,
+    StoreModule.forFeature('training', trainingReducer)
   ],
   exports: []
 })

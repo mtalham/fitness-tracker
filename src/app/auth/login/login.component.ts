@@ -23,4 +23,8 @@ export class LoginComponent implements OnInit {
   handleSubmit(form: NgForm) {
     this.authService.loginUser(form.value);
   }
+
+  googleSignIn() {
+    this.authService.googleSignIn();
+  }
 }
