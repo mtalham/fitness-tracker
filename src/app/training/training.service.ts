@@ -53,7 +53,8 @@ export class TrainingService {
     this.fbSubs.push(this.db.collection('completedExercises')
       .snapshotChanges()
       .pipe(map(response => response.map(doc => {
-          return {
+        return {
+          // @ts-ignore
             ...doc.payload.doc.data(),
             id: doc.payload.doc.id,
           };
