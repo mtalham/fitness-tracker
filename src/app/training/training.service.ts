@@ -20,6 +20,9 @@ export class TrainingService {
   private runningExercise: Exercise;
 
   constructor(private db: AngularFirestore, private uiService: UIService, private store: Store<State>) {
+  }
+
+  setUser() {
     this.fbSubs.push(this.store.select(getUser).subscribe(u => {
       this.user = u;
     }));
@@ -45,6 +48,7 @@ export class TrainingService {
         this.uiService.loadingChange.next(false);
         this.uiService.showSnackbar('Failed to fetch exercises, try again later');
       }));
+    this.setUser();
   }
 
   startTraining(selectedId: string) {
@@ -66,15 +70,16 @@ export class TrainingService {
             id: doc.payload.doc.id,
           };
         })
-      )).subscribe((exercises: Exercise[]) => {
-          const e = exercises.filter(ex => ex.userId === this.user.userId);
-          this.completedExercisesChanged.next(e);
-        }
-      ));
+      )).subscribe((exercises: Exercise[]) => this.completedExercisesChanged.next(exercises)));
   }
 
   completeTraining() {
-    this.addExerciseToFirestore({...this.runningExercise, date: new Date(), state: 'completed', userId: this.user.userId});
+    this.addExerciseToFirestore({
+      ...this.runningExercise,
+      date: new Date(),
+      state: 'completed',
+      userId: this.user.userId
+    });
     this.runningExercise = null;
     this.exerciseChanged.next(null);
   }
@@ -85,7 +90,8 @@ export class TrainingService {
       date: new Date(),
       state: 'cancelled',
       duration: this.runningExercise.duration * (progress / 100),
-      calories: this.runningExercise.calories * (progress / 100)
+      calories: this.runningExercise.calories * (progress / 100),
+      userId: this.user.userId
     });
     this.runningExercise = null;
     this.exerciseChanged.next(null);
