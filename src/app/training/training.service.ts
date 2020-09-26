@@ -4,18 +4,25 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {UIService} from '../shared/UI.service';
+import {Store} from '@ngrx/store';
+import {getUser, State} from '../app.reducer';
+import {User} from '../auth/user.model';
 
 @Injectable()
 export class TrainingService {
   exerciseChanged = new Subject<Exercise>();
   exercisesChanged = new Subject<Exercise[]>();
   completedExercisesChanged = new Subject<Exercise[]>();
+  private user: User;
   private fbSubs: Subscription[] = [];
 
   availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
 
-  constructor(private db: AngularFirestore, private uiService: UIService) {
+  constructor(private db: AngularFirestore, private uiService: UIService, private store: Store<State>) {
+    this.fbSubs.push(this.store.select(getUser).subscribe(u => {
+      this.user = u;
+    }));
   }
 
   fetchAvailableExercises() {
@@ -53,18 +60,21 @@ export class TrainingService {
     this.fbSubs.push(this.db.collection('completedExercises')
       .snapshotChanges()
       .pipe(map(response => response.map(doc => {
-        return {
-          // @ts-ignore
+          return {
+            // @ts-ignore
             ...doc.payload.doc.data(),
             id: doc.payload.doc.id,
           };
         })
-      )).subscribe((exercises: Exercise[]) => this.completedExercisesChanged.next(exercises)
+      )).subscribe((exercises: Exercise[]) => {
+          const e = exercises.filter(ex => ex.userId === this.user.userId);
+          this.completedExercisesChanged.next(e);
+        }
       ));
   }
 
   completeTraining() {
-    this.addExerciseToFirestore({...this.runningExercise, date: new Date(), state: 'completed'});
+    this.addExerciseToFirestore({...this.runningExercise, date: new Date(), state: 'completed', userId: this.user.userId});
     this.runningExercise = null;
     this.exerciseChanged.next(null);
   }

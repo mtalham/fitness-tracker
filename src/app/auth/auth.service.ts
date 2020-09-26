@@ -7,7 +7,7 @@ import {UIService} from '../shared/UI.service';
 import {Store} from '@ngrx/store';
 import {getIsAuthenticated, State} from '../app.reducer';
 import {StartLoading, StopLoading} from '../shared/ui.actions';
-import {ToggleAuthentication} from './auth.reducer';
+import {InitializeUser, ToggleAuthentication} from './auth.reducer';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +23,7 @@ export class AuthService {
   initAuthListener() {
     this.afAuth.authState.subscribe(user => {
       if (user) {
+        this.store.dispatch(InitializeUser({payload: {email: user.email, userId: user.uid}}));
         this.reroute(true, '/training');
       } else {
         this.trainingService.cancelSubscriptions();
